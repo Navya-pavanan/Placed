@@ -67,7 +67,7 @@ const TestResultUI = ({ title, results, onContinue, continueLabel = "Continue to
         {results.questions && results.questions.length > 0 && (
           <div className="review-section" style={{ marginTop: '16px', textAlign: 'left' }}>
             <h3 className="review-section-title" style={{ fontSize: '16px', fontWeight: '800', marginBottom: '14px' }}>
-              💡 Questions & Detailed Explanations
+              Questions & Detailed Explanations
             </h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -77,7 +77,7 @@ const TestResultUI = ({ title, results, onContinue, continueLabel = "Continue to
                 const isUnanswered = !selected;
 
                 return (
-                  <div 
+                  <div
                     key={q.id || idx}
                     className="review-item-card"
                     style={{
@@ -91,7 +91,7 @@ const TestResultUI = ({ title, results, onContinue, continueLabel = "Continue to
                       <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--primary)' }}>
                         Question {idx + 1} {q.category ? `• ${q.category}` : ''}
                       </span>
-                      <span 
+                      <span
                         style={{
                           fontSize: '11.5px',
                           fontWeight: '700',
@@ -134,7 +134,7 @@ const TestResultUI = ({ title, results, onContinue, continueLabel = "Continue to
                         }
 
                         return (
-                          <div 
+                          <div
                             key={opt.k}
                             style={{
                               padding: '8px 12px',
@@ -153,7 +153,7 @@ const TestResultUI = ({ title, results, onContinue, continueLabel = "Continue to
                     </div>
 
                     {q.explanation && (
-                      <div 
+                      <div
                         style={{
                           padding: '10px 12px',
                           background: '#EFF6FF',
@@ -164,7 +164,7 @@ const TestResultUI = ({ title, results, onContinue, continueLabel = "Continue to
                           lineHeight: '1.5'
                         }}
                       >
-                        <strong>💡 Explanation: </strong>{q.explanation}
+                        <strong> Explanation: </strong>{q.explanation}
                       </div>
                     )}
                   </div>

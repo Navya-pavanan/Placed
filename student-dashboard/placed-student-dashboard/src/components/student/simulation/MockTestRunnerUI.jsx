@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  Award, 
-  ArrowRight, 
-  Brain, 
-  MessageSquare, 
-  Code2, 
-  CheckCircle2, 
-  Clock, 
-  AlertTriangle, 
-  RotateCcw, 
+import {
+  Award,
+  ArrowRight,
+  Brain,
+  MessageSquare,
+  Code2,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  RotateCcw,
   ChevronRight,
   Sparkles,
   BookOpen
@@ -29,22 +29,22 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
   // Extract questions and problems from assessment payload
   const rawSections = assessment?.sections || {};
   const allQuestions = assessment?.questions || [];
-  
+
   // Aptitude section
   const aptitudeList = rawSections.aptitude && rawSections.aptitude.length > 0
     ? rawSections.aptitude
     : allQuestions.filter(q => {
-        const cat = (q.category || '').toLowerCase();
-        return cat.includes('apt') || cat.includes('quant') || cat.includes('logic') || !cat.includes('comm');
-      });
+      const cat = (q.category || '').toLowerCase();
+      return cat.includes('apt') || cat.includes('quant') || cat.includes('logic') || !cat.includes('comm');
+    });
 
   // Communication section
   const commList = rawSections.communication && rawSections.communication.length > 0
     ? rawSections.communication
     : allQuestions.filter(q => {
-        const cat = (q.category || '').toLowerCase();
-        return cat.includes('comm') || cat.includes('verbal') || cat.includes('interview');
-      });
+      const cat = (q.category || '').toLowerCase();
+      return cat.includes('comm') || cat.includes('verbal') || cat.includes('interview');
+    });
 
   // Fallback defaults if either MCQ section is empty
   const finalAptitude = aptitudeList.length > 0 ? aptitudeList : [
@@ -129,25 +129,25 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
   const codingList = rawSections.coding && rawSections.coding.length > 0
     ? rawSections.coding
     : (assessment?.codingProblems && assessment.codingProblems.length > 0 ? assessment.codingProblems : [
-        {
-          id: "cp_m_twosum",
-          title: "Target Sum Indices",
-          difficulty: "Easy",
-          description: "Given an integer array nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.",
-          inputFormat: "First line contains integer N (array size).\nSecond line contains N space-separated integers.\nThird line contains integer Target.",
-          outputFormat: "Print the two space-separated 0-based indices in ascending order.",
-          constraints: "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9",
-          sampleInput: "4\n2 7 11 15\n9",
-          sampleOutput: "0 1",
-          testCases: [
-            { id: 1, input: "4\n2 7 11 15\n9", expectedOutput: "0 1", isHidden: false },
-            { id: 2, input: "3\n3 2 4\n6", expectedOutput: "1 2", isHidden: false },
-            { id: 3, input: "2\n3 3\n6", expectedOutput: "0 1", isHidden: true },
-            { id: 4, input: "5\n1 5 8 12 19\n20", expectedOutput: "0 4", isHidden: true },
-            { id: 5, input: "4\n-1 -2 -3 -4\n-6", expectedOutput: "1 3", isHidden: true }
-          ]
-        }
-      ]);
+      {
+        id: "cp_m_twosum",
+        title: "Target Sum Indices",
+        difficulty: "Easy",
+        description: "Given an integer array nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.",
+        inputFormat: "First line contains integer N (array size).\nSecond line contains N space-separated integers.\nThird line contains integer Target.",
+        outputFormat: "Print the two space-separated 0-based indices in ascending order.",
+        constraints: "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9",
+        sampleInput: "4\n2 7 11 15\n9",
+        sampleOutput: "0 1",
+        testCases: [
+          { id: 1, input: "4\n2 7 11 15\n9", expectedOutput: "0 1", isHidden: false },
+          { id: 2, input: "3\n3 2 4\n6", expectedOutput: "1 2", isHidden: false },
+          { id: 3, input: "2\n3 3\n6", expectedOutput: "0 1", isHidden: true },
+          { id: 4, input: "5\n1 5 8 12 19\n20", expectedOutput: "0 4", isHidden: true },
+          { id: 5, input: "4\n-1 -2 -3 -4\n-6", expectedOutput: "1 3", isHidden: true }
+        ]
+      }
+    ]);
 
   // Section Steps: 'intro' | 'aptitude' | 'comm_break' | 'communication' | 'code_break' | 'coding' | 'report'
   const [step, setStep] = useState('intro');
@@ -399,7 +399,7 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
       <main className="dashboard-content">
         <div className="test-wrapper" style={{ maxWidth: '860px', margin: '0 auto' }}>
           <div className="results-card" style={{ padding: '36px', background: '#FFFFFF', borderRadius: '16px', border: '1px solid var(--border, #E2E8F0)', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
-            
+
             {/* Top Readiness Banner */}
             <div className="results-banner" style={{ background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)', color: '#FFFFFF', borderRadius: '14px', padding: '28px', textAlign: 'center', marginBottom: '28px' }}>
               <Award size={44} style={{ color: '#FBBF24', marginBottom: '8px' }} />
@@ -481,7 +481,7 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
                   const isUnanswered = !selected;
 
                   return (
-                    <div 
+                    <div
                       key={q.id || idx}
                       style={{
                         borderLeft: `4px solid ${isCorrect ? '#10B981' : isUnanswered ? '#94A3B8' : '#EF4444'}`,
@@ -495,7 +495,7 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
                         <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--primary, #2563EB)' }}>
                           Q{idx + 1}. {q.category || 'General'}
                         </span>
-                        <span 
+                        <span
                           style={{
                             fontSize: '11.5px',
                             fontWeight: '700',
@@ -538,7 +538,7 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
                           }
 
                           return (
-                            <div 
+                            <div
                               key={opt.k}
                               style={{
                                 padding: '8px 12px',
@@ -557,7 +557,7 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
                       </div>
 
                       {q.explanation && (
-                        <div 
+                        <div
                           style={{
                             padding: '10px 12px',
                             background: '#EFF6FF',
@@ -568,7 +568,7 @@ const MockTestRunnerUI = ({ assessment, onComplete, onExit, onRetake }) => {
                             lineHeight: '1.5'
                           }}
                         >
-                          <strong>💡 Solution & Explanation: </strong>{q.explanation}
+                          <strong> Solution & Explanation: </strong>{q.explanation}
                         </div>
                       )}
                     </div>
