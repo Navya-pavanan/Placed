@@ -2823,7 +2823,7 @@ import Papa from 'papaparse';
               created_at: new Date().toISOString()
             };
 
-            if (supabase) {
+            if (placedClient) {
               try {
                 const { error } = await placedClient.from("study_modules").insert([dbRecord]);
                 if (error) {
@@ -2877,7 +2877,7 @@ import Papa from 'papaparse';
       };
 
       const handleDeleteStudyMaterial = async (item) => {
-        if (supabase) {
+        if (placedClient) {
           try {
             const { error } = await placedClient.from("study_modules").delete().eq("id", item.id);
             if (error) {
@@ -3615,15 +3615,11 @@ import Papa from 'papaparse';
                 createdAt: r.created_at ? new Date(r.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "Just now"
               };
             });
-            setStudyModules(prev => {
-              const ids = new Set(parsed.map(p => p.id));
-              const merged = [...parsed, ...prev.filter(p => !ids.has(p.id))];
-              try {
-                const cacheSafe = merged.map(m => ({ ...m, fileData: null }));
-                localStorage.setItem("placed_study_modules", JSON.stringify(cacheSafe));
-              } catch (_) {}
-              return merged;
-            });
+            setStudyModules(parsed);
+            try {
+              const cacheSafe = parsed.map(m => ({ ...m, fileData: null }));
+              localStorage.setItem("placed_study_modules", JSON.stringify(cacheSafe));
+            } catch (_) {}
           }
           setIsSupabaseConnected(true);
         } catch (err) {
