@@ -6,6 +6,8 @@ import {
   Search, 
   X, 
   ChevronDown, 
+  ChevronLeft,
+  ChevronRight,
   FileText, 
   Eye, 
   ArrowLeft,
@@ -117,6 +119,7 @@ const StudyModules = () => {
 
   // Google Drive-like Fullscreen Document Viewer state (View Only - No Download)
   const [activeDocument, setActiveDocument] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const viewerContainerRef = useRef(null);
@@ -175,12 +178,20 @@ const StudyModules = () => {
     });
   }, [modules, selectedTopic, searchQuery]);
 
-  // Keydown protection to disable saving/printing when viewing protected document
+  // Keydown protection & navigation
   useEffect(() => {
     if (!activeDocument) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setActiveDocument(null);
+        return;
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        setCurrentPage(p => Math.max(1, p - 1));
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        setCurrentPage(p => p + 1);
         return;
       }
       if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p' || e.key === 'u' || e.key === 'S' || e.key === 'P' || e.key === 'U')) {
@@ -193,8 +204,17 @@ const StudyModules = () => {
   }, [activeDocument]);
 
   const handleOpenDocument = (item) => {
+    setCurrentPage(1);
     setZoom(100);
     setActiveDocument(item);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage(p => Math.max(1, p - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(p => p + 1);
   };
 
   const toggleFullscreen = () => {
@@ -475,6 +495,43 @@ const StudyModules = () => {
               </div>
             </div>
 
+            {/* Middle Section: Page Navigation (Previous / Next Arrows & Counter) */}
+            <div className="gdrive-topbar-center">
+              <button 
+                className="gdrive-btn" 
+                onClick={handlePrevPage}
+                disabled={currentPage <= 1}
+                title="Previous Page (Left Arrow Key)"
+                aria-label="Previous Page"
+              >
+                <ChevronLeft size={18} />
+              </button>
+
+              <div className="gdrive-page-box">
+                <span className="gdrive-page-text">Page</span>
+                <input 
+                  type="number"
+                  min="1"
+                  className="gdrive-page-input"
+                  value={currentPage}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (!isNaN(val) && val > 0) setCurrentPage(val);
+                  }}
+                  title="Enter page number"
+                />
+              </div>
+
+              <button 
+                className="gdrive-btn" 
+                onClick={handleNextPage}
+                title="Next Page (Right Arrow Key)"
+                aria-label="Next Page"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+
             {/* Right section: Zoom controls, Fullscreen, Close (NO DOWNLOAD BUTTON) */}
             <div className="gdrive-topbar-right">
               {/* Zoom Out */}
@@ -539,12 +596,34 @@ const StudyModules = () => {
 
           {/* Main Google Drive Document Canvas */}
           <div className="gdrive-canvas">
+            {/* FLOATING NEXT/PREV ARROWS (Google Drive Style) */}
+            {currentPage > 1 && (
+              <button 
+                className="gdrive-floating-nav gdrive-floating-prev"
+                onClick={handlePrevPage}
+                title="Previous Page (Left Arrow Key)"
+                aria-label="Previous Page"
+              >
+                <ChevronLeft size={28} />
+              </button>
+            )}
+
+            <button 
+              className="gdrive-floating-nav gdrive-floating-next"
+              onClick={handleNextPage}
+              title="Next Page (Right Arrow Key)"
+              aria-label="Next Page"
+            >
+              <ChevronRight size={28} />
+            </button>
+
             {docMeta.fileData ? (
               docMeta.isPdf ? (
-                /* PDF Viewer: Full height iframe with Google Drive aesthetic */
+                /* PDF Viewer: Full height iframe with Google Drive aesthetic & page navigation */
                 <div className="gdrive-pdf-container">
                   <iframe
-                    src={`${docMeta.fileData}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                    key={`${activeDocument.id}-page-${currentPage}`}
+                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
                     title={activeDocument.title}
                     className="gdrive-pdf-iframe"
                     style={{
@@ -579,7 +658,8 @@ const StudyModules = () => {
               ) : (
                 <div className="gdrive-pdf-container">
                   <iframe
-                    src={`${docMeta.fileData}#toolbar=0&navpanes=0&scrollbar=1`}
+                    key={`${activeDocument.id}-page-${currentPage}`}
+                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`}
                     title={activeDocument.title}
                     className="gdrive-pdf-iframe"
                   />
