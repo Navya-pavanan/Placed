@@ -4354,7 +4354,10 @@
             if (setStudyModules) {
               setStudyModules(prev => {
                 const updated = [newModuleItem, ...prev];
-                localStorage.setItem("placed_study_modules", JSON.stringify(updated));
+                try {
+                  const cacheSafe = updated.map(m => ({ ...m, fileData: null }));
+                  localStorage.setItem("placed_study_modules", JSON.stringify(cacheSafe));
+                } catch (_) {}
                 return updated;
               });
             }
@@ -4389,7 +4392,10 @@
         if (setStudyModules) {
           setStudyModules(prev => {
             const updated = prev.filter(x => x.id !== item.id);
-            localStorage.setItem("placed_study_modules", JSON.stringify(updated));
+            try {
+              const cacheSafe = updated.map(m => ({ ...m, fileData: null }));
+              localStorage.setItem("placed_study_modules", JSON.stringify(cacheSafe));
+            } catch (_) {}
             return updated;
           });
         }
@@ -5106,7 +5112,10 @@
             setStudyModules(prev => {
               const ids = new Set(parsed.map(p => p.id));
               const merged = [...parsed, ...prev.filter(p => !ids.has(p.id))];
-              localStorage.setItem("placed_study_modules", JSON.stringify(merged));
+              try {
+                const cacheSafe = merged.map(m => ({ ...m, fileData: null }));
+                localStorage.setItem("placed_study_modules", JSON.stringify(cacheSafe));
+              } catch (_) {}
               return merged;
             });
           }
