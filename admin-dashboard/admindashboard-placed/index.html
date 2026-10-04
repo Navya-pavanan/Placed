@@ -4983,17 +4983,19 @@
       );
     }
 
+    const VALID_VIEWS = ["dashboard", "students", "institutions", "departments", "assessments", "drives", "analytics", "reports", "notifications", "settings"];
+
     /* ============================== APP ROOT ============================== */
     function App() {
       const toast = useToast();
 
-      const VALID_VIEWS = useMemo(() => ["dashboard", "students", "institutions", "departments", "assessments", "drives", "analytics", "reports", "notifications", "settings"], []);
-
       const getInitialView = () => {
-        const hash = window.location.hash.replace("#", "").trim();
-        if (hash && VALID_VIEWS.includes(hash)) return hash;
-        const saved = localStorage.getItem("placed_active_view");
-        if (saved && VALID_VIEWS.includes(saved)) return saved;
+        try {
+          const hash = window.location.hash.replace("#", "").trim();
+          if (hash && VALID_VIEWS.includes(hash)) return hash;
+          const saved = localStorage.getItem("placed_active_view");
+          if (saved && VALID_VIEWS.includes(saved)) return saved;
+        } catch (_) {}
         return "dashboard";
       };
 
@@ -5002,24 +5004,28 @@
       const setView = useCallback((newView) => {
         if (VALID_VIEWS.includes(newView)) {
           setViewState(newView);
-          localStorage.setItem("placed_active_view", newView);
+          try {
+            localStorage.setItem("placed_active_view", newView);
+          } catch (_) {}
           if (window.location.hash !== "#" + newView) {
             window.location.hash = newView;
           }
         }
-      }, [VALID_VIEWS]);
+      }, []);
 
       useEffect(() => {
         const handleHashChange = () => {
           const hash = window.location.hash.replace("#", "").trim();
           if (hash && VALID_VIEWS.includes(hash)) {
             setViewState(hash);
-            localStorage.setItem("placed_active_view", hash);
+            try {
+              localStorage.setItem("placed_active_view", hash);
+            } catch (_) {}
           }
         };
         window.addEventListener("hashchange", handleHashChange);
         return () => window.removeEventListener("hashchange", handleHashChange);
-      }, [VALID_VIEWS]);
+      }, []);
 
       const [sidebarOpen, setSidebarOpen] = useState(false);
       const [modal, setModal] = useState(null);
