@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   BookOpen, 
   Sparkles, 
@@ -112,6 +113,7 @@ const STUDY_DOCUMENT_CONTENT = {
 const StudyModules = () => {
   const [modules, setModules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   // Search & Filter state matching 1st photo
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,6 +125,21 @@ const StudyModules = () => {
   const [zoom, setZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const viewerContainerRef = useRef(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (activeDocument) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activeDocument]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -460,7 +477,7 @@ const StudyModules = () => {
       </div>
 
       {/* GOOGLE DRIVE STYLE FULLSCREEN VIEWER (VIEW ONLY - NO DOWNLOAD) */}
-      {activeDocument && (
+      {activeDocument && mounted && createPortal(
         <div 
           className="gdrive-viewer-root"
           ref={viewerContainerRef}
@@ -744,7 +761,8 @@ const StudyModules = () => {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </main>
   );
