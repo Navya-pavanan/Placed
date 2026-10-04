@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         <title>PLACED — Placement & Assessment Intelligence Platform</title>
         <meta name="description" content="AI-Powered Student Career Readiness, Assessments & Placement Intelligence Platform" />
