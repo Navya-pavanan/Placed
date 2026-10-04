@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   BookOpen, 
   Sparkles, 
@@ -8,8 +8,12 @@ import {
   ChevronDown, 
   FileText, 
   Eye, 
-  ShieldCheck, 
-  Play,
+  ArrowLeft,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Maximize2,
+  Minimize2,
   Info
 } from 'lucide-react';
 import { studyModuleService } from '../../services/studyModuleService';
@@ -111,8 +115,11 @@ const StudyModules = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('All Topics');
 
-  // Document Viewer Modal state (View Only - No Download)
+  // Google Drive-like Fullscreen Document Viewer state (View Only - No Download)
   const [activeDocument, setActiveDocument] = useState(null);
+  const [zoom, setZoom] = useState(100);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const viewerContainerRef = useRef(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -172,6 +179,10 @@ const StudyModules = () => {
   useEffect(() => {
     if (!activeDocument) return;
     const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setActiveDocument(null);
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p' || e.key === 'u' || e.key === 'S' || e.key === 'P' || e.key === 'U')) {
         e.preventDefault();
         e.stopPropagation();
@@ -180,6 +191,36 @@ const StudyModules = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeDocument]);
+
+  const handleOpenDocument = (item) => {
+    setZoom(100);
+    setActiveDocument(item);
+  };
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      if (viewerContainerRef.current?.requestFullscreen) {
+        viewerContainerRef.current.requestFullscreen();
+        setIsFullscreen(true);
+      } else if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
 
   // Extract and decode document data
   const docMeta = useMemo(() => {
@@ -216,7 +257,8 @@ const StudyModules = () => {
     const isPdf = Boolean(
       (fileType && fileType.includes('pdf')) ||
       (fileData && fileData.startsWith('data:application/pdf')) ||
-      (fileName && fileName.toLowerCase().endsWith('.pdf'))
+      (fileName && fileName.toLowerCase().endsWith('.pdf')) ||
+      (activeDocument.title && activeDocument.title.toLowerCase().endsWith('.pdf'))
     );
 
     const isImage = Boolean(
@@ -230,7 +272,9 @@ const StudyModules = () => {
       (fileName && /\.(txt|md|csv|json|js|py|html)$/i.test(fileName))
     );
 
-    return { fileData, fileName, fileType, fileSize, cleanDescription, isPdf, isImage, isText };
+    const displayTitle = fileName || activeDocument.title || 'Study Module Document';
+
+    return { fileData, fileName, fileType, fileSize, cleanDescription, isPdf, isImage, isText, displayTitle };
   }, [activeDocument]);
 
   const decodeTextData = (dataUrl) => {
@@ -265,8 +309,7 @@ const StudyModules = () => {
         </div>
       </div>
 
-
-      {/* UPLOADED STUDY MATERIALS TABLE CARD (EXACT MATCH WITH PHOTO 1) */}
+      {/* UPLOADED STUDY MATERIALS TABLE CARD */}
       <div className="study-materials-card">
         <div className="sm-header">
           <div className="sm-header-left">
@@ -278,7 +321,7 @@ const StudyModules = () => {
             </p>
           </div>
 
-          {/* Search & Topic Filters matching 1st Photo */}
+          {/* Search & Topic Filters */}
           <div className="sm-controls">
             {/* Search Input: Search documents by name... */}
             <div className="sm-search-wrap">
@@ -368,7 +411,7 @@ const StudyModules = () => {
                       </span>
                     </td>
 
-                    {/* File Details (em-dash matching screenshot) */}
+                    {/* File Details */}
                     <td style={{ color: '#64748b' }}>
                       {item.fileDetails || '—'}
                     </td>
@@ -382,8 +425,8 @@ const StudyModules = () => {
                     <td style={{ textAlign: 'right' }}>
                       <button 
                         className="sm-action-btn"
-                        onClick={() => setActiveDocument(item)}
-                        title="View document (read-only)"
+                        onClick={() => handleOpenDocument(item)}
+                        title="Open document in reader"
                       >
                         <Eye size={13} style={{ marginRight: '2px', color: '#2563eb' }} /> View/Open
                       </button>
@@ -396,235 +439,230 @@ const StudyModules = () => {
         </div>
       </div>
 
-      {/* DOCUMENT VIEWER MODAL (STRICTLY VIEW-ONLY, NO DOWNLOAD) */}
+      {/* GOOGLE DRIVE STYLE FULLSCREEN VIEWER (VIEW ONLY - NO DOWNLOAD) */}
       {activeDocument && (
         <div 
-          className="doc-modal-overlay" 
-          onClick={() => setActiveDocument(null)}
+          className="gdrive-viewer-root"
+          ref={viewerContainerRef}
+          onContextMenu={(e) => e.preventDefault()} // Anti-download right click disable
           role="dialog"
           aria-modal="true"
         >
-          <div 
-            className="doc-modal-container" 
-            onClick={(e) => e.stopPropagation()}
-            onContextMenu={(e) => e.preventDefault()} // Disables right-click download
-          >
-            {/* Modal Header */}
-            <div className="doc-modal-header">
-              <div className="doc-modal-header-left">
-                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}>
-                  <FileText size={18} />
-                </div>
-                <div>
-                  <h3 className="doc-modal-title">{activeDocument.title}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-                    <span className="sm-topic-badge" style={{ padding: '1px 8px', fontSize: '11px' }}>
-                      {activeDocument.subject}
-                    </span>
-                    <span style={{ fontSize: '11px', color: '#16A34A', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <ShieldCheck size={13} /> View-Only Access
-                    </span>
-                  </div>
-                </div>
+          {/* Top Google Drive Header Bar */}
+          <header className="gdrive-topbar">
+            {/* Left section: Back button, File Icon, Title, Topic */}
+            <div className="gdrive-topbar-left">
+              <button 
+                className="gdrive-btn gdrive-back-btn" 
+                onClick={() => setActiveDocument(null)}
+                title="Back to Study Modules"
+                aria-label="Back to Study Modules"
+              >
+                <ArrowLeft size={19} />
+              </button>
+
+              <div className="gdrive-file-badge">
+                <span className="gdrive-pdf-icon-tag">PDF</span>
               </div>
 
+              <div className="gdrive-title-wrap">
+                <span className="gdrive-doc-title" title={docMeta.displayTitle}>
+                  {docMeta.displayTitle}
+                </span>
+                <span className="gdrive-topic-pill">
+                  {activeDocument.subject}
+                </span>
+              </div>
+            </div>
+
+            {/* Right section: Zoom controls, Fullscreen, Close (NO DOWNLOAD BUTTON) */}
+            <div className="gdrive-topbar-right">
+              {/* Zoom Out */}
               <button 
+                className="gdrive-btn" 
+                onClick={() => setZoom(z => Math.max(50, z - 20))}
+                title="Zoom out"
+                aria-label="Zoom out"
+                disabled={zoom <= 50}
+              >
+                <ZoomOut size={17} />
+              </button>
+
+              <span className="gdrive-zoom-val">{zoom}%</span>
+
+              {/* Zoom In */}
+              <button 
+                className="gdrive-btn" 
+                onClick={() => setZoom(z => Math.min(250, z + 20))}
+                title="Zoom in"
+                aria-label="Zoom in"
+                disabled={zoom >= 250}
+              >
+                <ZoomIn size={17} />
+              </button>
+
+              {/* Reset Zoom */}
+              {zoom !== 100 && (
+                <button 
+                  className="gdrive-btn" 
+                  onClick={() => setZoom(100)}
+                  title="Reset zoom to 100%"
+                  aria-label="Reset zoom"
+                >
+                  <RotateCcw size={15} />
+                </button>
+              )}
+
+              <div className="gdrive-divider" />
+
+              {/* Fullscreen toggle */}
+              <button 
+                className="gdrive-btn" 
+                onClick={toggleFullscreen}
+                title={isFullscreen ? "Exit fullscreen" : "Full screen"}
+                aria-label="Toggle fullscreen"
+              >
+                {isFullscreen ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
+              </button>
+
+              {/* Close Button */}
+              <button 
+                className="gdrive-btn gdrive-close-btn" 
                 onClick={() => setActiveDocument(null)}
-                style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
                 title="Close viewer"
                 aria-label="Close viewer"
               >
-                <X size={20} />
+                <X size={19} />
               </button>
             </div>
+          </header>
 
-            {/* Modal Document Body */}
-            <div className="doc-modal-body">
-              <div className="doc-paper">
-                {/* Security Anti-Copy Watermark */}
-                <div className="doc-watermark">STUDENT VIEW ONLY</div>
-
-                {/* View-Only Security Notice */}
-                <div className="doc-security-banner">
-                  <ShieldCheck size={16} style={{ flexShrink: 0 }} />
-                  <span>
-                    Protected Study Document: Downloading, printing, or external distribution is disabled by placement policy.
-                  </span>
+          {/* Main Google Drive Document Canvas */}
+          <div className="gdrive-canvas">
+            {docMeta.fileData ? (
+              docMeta.isPdf ? (
+                /* PDF Viewer: Full height iframe with Google Drive aesthetic */
+                <div className="gdrive-pdf-container">
+                  <iframe
+                    src={`${docMeta.fileData}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                    title={activeDocument.title}
+                    className="gdrive-pdf-iframe"
+                    style={{
+                      transform: zoom !== 100 ? `scale(${zoom / 100})` : 'none',
+                      transformOrigin: 'top center',
+                      width: zoom !== 100 ? `${100 * (100 / zoom)}%` : '100%',
+                      height: zoom !== 100 ? `${100 * (100 / zoom)}%` : '100%'
+                    }}
+                  />
                 </div>
-
-                {/* Document Metadata Header */}
-                <div style={{ borderBottom: '1.5px solid #E2E8F0', paddingBottom: '16px', marginBottom: '20px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    Official Placement Preparation Document
-                  </span>
-                  <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#0F172A', margin: '6px 0 8px 0' }}>
-                    {activeDocument.title}
-                  </h1>
-                  {docMeta.cleanDescription && (
-                    <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: 1.5, margin: 0 }}>
-                      {docMeta.cleanDescription}
-                    </p>
-                  )}
-
-                  <div style={{ display: 'flex', gap: '20px', marginTop: '14px', flexWrap: 'wrap', fontSize: '12px', color: '#64748B' }}>
-                    <div>Subject Track: <strong style={{ color: '#1E293B' }}>{activeDocument.subject}</strong></div>
-                    <div>Source: <strong style={{ color: '#1E293B' }}>Supabase study_module</strong></div>
-                    <div>Uploaded: <strong style={{ color: '#1E293B' }}>{formatUploadDate(activeDocument.createdAt)}</strong></div>
-                    {docMeta.fileName && (
-                      <div>File: <strong style={{ color: '#1E293B' }}>{docMeta.fileName}</strong></div>
-                    )}
-                  </div>
+              ) : docMeta.isImage ? (
+                /* Image Viewer */
+                <div className="gdrive-image-wrap">
+                  <img
+                    src={docMeta.fileData}
+                    alt={activeDocument.title}
+                    draggable={false}
+                    className="gdrive-image"
+                    style={{
+                      transform: `scale(${zoom / 100})`,
+                      transition: 'transform 0.15s ease'
+                    }}
+                  />
                 </div>
-
-                {/* RENDER ACTUAL UPLOADED FILE IF AVAILABLE */}
-                {docMeta.fileData ? (
-                  <div className="doc-uploaded-viewer" onContextMenu={(e) => e.preventDefault()}>
-                    {docMeta.isPdf ? (
-                      <div className="doc-pdf-wrapper" style={{ width: '100%', position: 'relative' }}>
-                        <iframe
-                          src={`${docMeta.fileData}#toolbar=0&navpanes=0&scrollbar=1`}
-                          title={activeDocument.title}
-                          className="doc-pdf-iframe"
-                          style={{
-                            width: '100%',
-                            height: '680px',
-                            border: '1px solid #E2E8F0',
-                            borderRadius: '8px',
-                            backgroundColor: '#F8FAFC',
-                            display: 'block'
-                          }}
-                        />
-                      </div>
-                    ) : docMeta.isImage ? (
-                      <div style={{ textAlign: 'center', padding: '16px 0', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                        <img
-                          src={docMeta.fileData}
-                          alt={activeDocument.title}
-                          draggable="false"
-                          style={{
-                            maxWidth: '100%',
-                            maxHeight: '650px',
-                            objectFit: 'contain',
-                            borderRadius: '6px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                            userSelect: 'none',
-                            pointerEvents: 'none'
-                          }}
-                        />
-                      </div>
-                    ) : docMeta.isText ? (
-                      <div style={{ position: 'relative' }}>
-                        <pre
-                          style={{
-                            background: '#F8FAFC',
-                            border: '1px solid #E2E8F0',
-                            borderRadius: '8px',
-                            padding: '18px 20px',
-                            fontSize: '13.5px',
-                            lineHeight: 1.6,
-                            color: '#1E293B',
-                            whiteSpace: 'pre-wrap',
-                            wordBreak: 'break-word',
-                            maxHeight: '600px',
-                            overflowY: 'auto',
-                            fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-                            userSelect: 'none'
-                          }}
-                        >
-                          {decodeTextData(docMeta.fileData)}
-                        </pre>
-                      </div>
-                    ) : (
-                      <div className="doc-pdf-wrapper" style={{ width: '100%', position: 'relative' }}>
-                        <iframe
-                          src={`${docMeta.fileData}#toolbar=0&navpanes=0`}
-                          title={activeDocument.title}
-                          style={{
-                            width: '100%',
-                            height: '650px',
-                            border: '1px solid #E2E8F0',
-                            borderRadius: '8px',
-                            backgroundColor: '#F8FAFC',
-                            display: 'block'
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    {/* Fallback Section 1: Curriculum Overview & Objectives */}
-                    <div className="doc-section">
-                      <h4 className="doc-section-title">
-                        <BookOpen size={15} color="#2563EB" /> 1. Syllabus & Core Concept Breakdown
-                      </h4>
-                      <p className="doc-paragraph">
-                        This module provides direct coverage of topics assessed during preliminary placement aptitude tests and campus screening rounds:
-                      </p>
-                      
-                      {STUDY_DOCUMENT_CONTENT[activeDocument.id]?.syllabus ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                          {STUDY_DOCUMENT_CONTENT[activeDocument.id].syllabus.map((item, idx) => (
-                            <div key={idx} style={{ background: '#F8FAFC', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                              <strong style={{ fontSize: '13px', color: '#0F172A' }}>{idx + 1}. {item.topic}:</strong>
-                              <span style={{ fontSize: '13px', color: '#475569', marginLeft: '6px' }}>{item.details}</span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <ul className="doc-key-points">
-                          <li>Fundamental theoretical concepts and practical derivations</li>
-                          <li>Standard industry screening patterns and multiple-choice question typologies</li>
-                          <li>Speed-solving heuristics tailored for timed campus examinations</li>
-                        </ul>
-                      )}
-                    </div>
-
-                    {/* Fallback Section 2: Key Formulas & Shortcuts */}
-                    <div className="doc-section">
-                      <h4 className="doc-section-title">
-                        <Sparkles size={15} color="#2563EB" /> 2. High-Yield Shortcuts & Exam Rules
-                      </h4>
-                      <div className="doc-callout">
-                        <ul style={{ margin: 0, paddingLeft: '16px' }}>
-                          {(STUDY_DOCUMENT_CONTENT[activeDocument.id]?.shortcuts || [
-                            'Always cross-check unit dimensions and sign conventions',
-                            'Memorize primary conversion factors to save calculation time',
-                            'Use back-solving from provided answer choices when algebraic solving exceeds 90 seconds'
-                          ]).map((tip, idx) => (
-                            <li key={idx} style={{ marginBottom: idx === 2 ? 0 : '6px', fontSize: '13px' }}>{tip}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* Fallback Section 3: Placement Preparation Strategy */}
-                    <div className="doc-section">
-                      <h4 className="doc-section-title">
-                        <Info size={15} color="#2563EB" /> 3. Recommended Study Strategy
-                      </h4>
-                      <p className="doc-paragraph">
-                        {STUDY_DOCUMENT_CONTENT[activeDocument.id]?.tips || 
-                          'Review the core theory above, solve benchmark practice sets, and review time-per-question metrics in your S-1 Readiness Dashboard.'}
-                      </p>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Modal Footer (No Download button) */}
-            <div className="doc-modal-footer">
-              <span style={{ fontSize: '12px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <ShieldCheck size={14} color="#16A34A" /> Document Protected • View Only Mode Active
-              </span>
-              <button 
-                className="btn btn-primary btn-sm"
-                onClick={() => setActiveDocument(null)}
+              ) : docMeta.isText ? (
+                /* Plain Text / Code Document Sheet */
+                <div className="gdrive-doc-page" style={{ transform: zoom !== 100 ? `scale(${zoom / 100})` : 'none', transformOrigin: 'top center' }}>
+                  <pre className="gdrive-text-content">
+                    {decodeTextData(docMeta.fileData)}
+                  </pre>
+                </div>
+              ) : (
+                <div className="gdrive-pdf-container">
+                  <iframe
+                    src={`${docMeta.fileData}#toolbar=0&navpanes=0&scrollbar=1`}
+                    title={activeDocument.title}
+                    className="gdrive-pdf-iframe"
+                  />
+                </div>
+              )
+            ) : (
+              /* Fallback: Google Docs Style Document Sheet */
+              <div 
+                className="gdrive-doc-page" 
+                style={{ 
+                  transform: zoom !== 100 ? `scale(${zoom / 100})` : 'none', 
+                  transformOrigin: 'top center' 
+                }}
               >
-                Close Document
-              </button>
-            </div>
+                <div className="gdrive-doc-sheet-header">
+                  <h1 className="gdrive-doc-sheet-title">{activeDocument.title}</h1>
+                  <div className="gdrive-doc-sheet-meta">
+                    <span>Subject: <strong>{activeDocument.subject}</strong></span>
+                    <span>•</span>
+                    <span>Date: <strong>{formatUploadDate(activeDocument.createdAt)}</strong></span>
+                  </div>
+                  {docMeta.cleanDescription && (
+                    <p className="gdrive-doc-sheet-desc">{docMeta.cleanDescription}</p>
+                  )}
+                </div>
+
+                {/* Section 1 */}
+                <div className="gdrive-doc-section">
+                  <h3 className="gdrive-doc-section-title">
+                    <BookOpen size={16} color="#2563EB" /> 1. Syllabus & Core Concept Breakdown
+                  </h3>
+                  <p className="gdrive-doc-p">
+                    This module covers topics assessed during placement screening rounds and technical evaluations:
+                  </p>
+                  
+                  {STUDY_DOCUMENT_CONTENT[activeDocument.id]?.syllabus ? (
+                    <div className="gdrive-syllabus-list">
+                      {STUDY_DOCUMENT_CONTENT[activeDocument.id].syllabus.map((item, idx) => (
+                        <div key={idx} className="gdrive-syllabus-item">
+                          <strong>{idx + 1}. {item.topic}:</strong>
+                          <span>{item.details}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <ul className="gdrive-bullets">
+                      <li>Fundamental theoretical concepts and practical derivations</li>
+                      <li>Standard industry screening patterns and multiple-choice question typologies</li>
+                      <li>Speed-solving heuristics tailored for timed campus examinations</li>
+                    </ul>
+                  )}
+                </div>
+
+                {/* Section 2 */}
+                <div className="gdrive-doc-section">
+                  <h3 className="gdrive-doc-section-title">
+                    <Sparkles size={16} color="#2563EB" /> 2. High-Yield Shortcuts & Exam Rules
+                  </h3>
+                  <div className="gdrive-callout">
+                    <ul>
+                      {(STUDY_DOCUMENT_CONTENT[activeDocument.id]?.shortcuts || [
+                        'Always cross-check unit dimensions and sign conventions',
+                        'Memorize primary conversion factors to save calculation time',
+                        'Use back-solving from provided answer choices when algebraic solving exceeds 90 seconds'
+                      ]).map((tip, idx) => (
+                        <li key={idx}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Section 3 */}
+                <div className="gdrive-doc-section">
+                  <h3 className="gdrive-doc-section-title">
+                    <Info size={16} color="#2563EB" /> 3. Recommended Study Strategy
+                  </h3>
+                  <p className="gdrive-doc-p">
+                    {STUDY_DOCUMENT_CONTENT[activeDocument.id]?.tips || 
+                      'Review the core theory above, solve benchmark practice sets, and review time-per-question metrics in your S-1 Readiness Dashboard.'}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
