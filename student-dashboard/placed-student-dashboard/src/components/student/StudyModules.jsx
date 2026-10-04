@@ -110,6 +110,26 @@ const STUDY_DOCUMENT_CONTENT = {
   }
 };
 
+// Flexible helper to get syllabus/shortcuts/tips for any document or topic
+const getStudyDocContent = (doc) => {
+  if (!doc) return null;
+  if (STUDY_DOCUMENT_CONTENT[doc.id]) return STUDY_DOCUMENT_CONTENT[doc.id];
+  const str = `${doc.subject || ''} ${doc.subjectId || ''} ${doc.title || ''}`.toLowerCase();
+  if (str.includes('quant') || str.includes('math') || str.includes('percent') || str.includes('work') || str.includes('speed') || str.includes('profit')) {
+    return STUDY_DOCUMENT_CONTENT['module-quant'];
+  }
+  if (str.includes('tech') || str.includes('coding') || str.includes('java') || str.includes('computer') || str.includes('dsa') || str.includes('algorithm') || str.includes('it')) {
+    return STUDY_DOCUMENT_CONTENT['module-tech'];
+  }
+  if (str.includes('verbal') || str.includes('english') || str.includes('grammar') || str.includes('communication') || str.includes('employability')) {
+    return STUDY_DOCUMENT_CONTENT['module-english'];
+  }
+  if (str.includes('reason') || str.includes('logic') || str.includes('blood') || str.includes('direction') || str.includes('series') || str.includes('analytical')) {
+    return STUDY_DOCUMENT_CONTENT['module-reasoning'];
+  }
+  return STUDY_DOCUMENT_CONTENT['module-quant'];
+};
+
 const StudyModules = () => {
   const [modules, setModules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -128,6 +148,7 @@ const StudyModules = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [blobUrl, setBlobUrl] = useState(null);
   const viewerContainerRef = useRef(null);
 
   useEffect(() => {
@@ -330,6 +351,45 @@ const StudyModules = () => {
     const displayTitle = fileName || activeDocument.title || 'Study Module Document';
 
     return { fileData, fileName, fileType, fileSize, cleanDescription, isPdf, isImage, isText, displayTitle };
+  }, [activeDocument]);
+
+  useEffect(() => {
+    if (!activeDocument || !docMeta.fileData) {
+      if (blobUrl) {
+        try { URL.revokeObjectURL(blobUrl); } catch (_) {}
+        setBlobUrl(null);
+      }
+      return;
+    }
+
+    const data = docMeta.fileData;
+    if (typeof data === 'string' && data.startsWith('data:application/pdf')) {
+      try {
+        const parts = data.split(',');
+        const mime = parts[0].match(/:(.*?);/)?.[1] || 'application/pdf';
+        const binary = atob(parts[1]);
+        const len = binary.length;
+        const buffer = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          buffer[i] = binary.charCodeAt(i);
+        }
+        const blob = new Blob([buffer], { type: mime });
+        const url = URL.createObjectURL(blob);
+        setBlobUrl(url);
+        return () => {
+          try { URL.revokeObjectURL(url); } catch (_) {}
+        };
+      } catch (e) {
+        console.warn('PDF blob creation fallback:', e);
+        setBlobUrl(data);
+      }
+    } else {
+      setBlobUrl(data);
+    }
+  }, [activeDocument, docMeta.fileData]);
+
+  const activeSyllabus = useMemo(() => {
+    return getStudyDocContent(activeDocument);
   }, [activeDocument]);
 
   const decodeTextData = (dataUrl) => {
@@ -581,7 +641,7 @@ const StudyModules = () => {
               </button>
 
               <div className="gdrive-file-badge">
-                <span className="gdrive-pdf-icon-tag">PDF</span>
+                <span className="gdrive-pdf-icon-tag">{docMeta.isPdf ? 'PDF' : docMeta.isImage ? 'IMG' : docMeta.isText ? 'TXT' : 'DOC'}</span>
               </div>
 
               <div className="gdrive-title-wrap">
@@ -726,18 +786,24 @@ const StudyModules = () => {
                     transformOrigin: 'top center'
                   }}
                 >
-                  <iframe
-                    key={`${activeDocument.id}-page-${currentPage}`}
-                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
-                    title={activeDocument.title}
+                  <object
+                    data={`${blobUrl || docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
+                    type="application/pdf"
                     className="gdrive-pdf-iframe"
-                  />
+                  >
+                    <iframe
+                      key={`${activeDocument.id}-page-${currentPage}`}
+                      src={`${blobUrl || docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
+                      title={activeDocument.title}
+                      className="gdrive-pdf-iframe"
+                    />
+                  </object>
                 </div>
               ) : docMeta.isImage ? (
                 /* Image Viewer */
                 <div className="gdrive-image-wrap">
                   <img
-                    src={docMeta.fileData}
+                    src={blobUrl || docMeta.fileData}
                     alt={activeDocument.title}
                     draggable={false}
                     className="gdrive-image"
@@ -762,12 +828,18 @@ const StudyModules = () => {
                     transformOrigin: 'top center'
                   }}
                 >
-                  <iframe
-                    key={`${activeDocument.id}-page-${currentPage}`}
-                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
-                    title={activeDocument.title}
+                  <object
+                    data={`${blobUrl || docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
+                    type="application/pdf"
                     className="gdrive-pdf-iframe"
-                  />
+                  >
+                    <iframe
+                      key={`${activeDocument.id}-page-${currentPage}`}
+                      src={`${blobUrl || docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
+                      title={activeDocument.title}
+                      className="gdrive-pdf-iframe"
+                    />
+                  </object>
                 </div>
               )
             ) : (
@@ -800,9 +872,9 @@ const StudyModules = () => {
                     This module covers topics assessed during placement screening rounds and technical evaluations:
                   </p>
                   
-                  {STUDY_DOCUMENT_CONTENT[activeDocument.id]?.syllabus ? (
+                  {activeSyllabus?.syllabus ? (
                     <div className="gdrive-syllabus-list">
-                      {STUDY_DOCUMENT_CONTENT[activeDocument.id].syllabus.map((item, idx) => (
+                      {activeSyllabus.syllabus.map((item, idx) => (
                         <div key={idx} className="gdrive-syllabus-item">
                           <strong>{idx + 1}. {item.topic}:</strong>
                           <span>{item.details}</span>
@@ -825,7 +897,7 @@ const StudyModules = () => {
                   </h3>
                   <div className="gdrive-callout">
                     <ul>
-                      {(STUDY_DOCUMENT_CONTENT[activeDocument.id]?.shortcuts || [
+                      {(activeSyllabus?.shortcuts || [
                         'Always cross-check unit dimensions and sign conventions',
                         'Memorize primary conversion factors to save calculation time',
                         'Use back-solving from provided answer choices when algebraic solving exceeds 90 seconds'
@@ -842,7 +914,7 @@ const StudyModules = () => {
                     <Info size={16} color="#2563EB" /> 3. Recommended Study Strategy
                   </h3>
                   <p className="gdrive-doc-p">
-                    {STUDY_DOCUMENT_CONTENT[activeDocument.id]?.tips || 
+                    {activeSyllabus?.tips || 
                       'Review the core theory above, solve benchmark practice sets, and review time-per-question metrics in your S-1 Readiness Dashboard.'}
                   </p>
                 </div>

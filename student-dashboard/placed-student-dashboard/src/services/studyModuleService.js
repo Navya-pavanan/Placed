@@ -47,7 +47,7 @@ export const studyModuleService = {
       };
 
       // Database has live records
-      const mapped = data.map(m => {
+      const mapped = (data || []).map(m => {
         let meta = null;
         if (typeof m.description === 'string' && m.description.trim().startsWith('{')) {
           try {
@@ -55,10 +55,10 @@ export const studyModuleService = {
           } catch (_) {}
         }
 
-        const fileData = meta?.file_data || m.file_data || null;
-        const fileName = meta?.file_name || m.file_name || null;
-        const fileType = meta?.file_type || m.file_type || null;
-        const fileSize = meta?.file_size || m.file_size || 0;
+        const fileData = meta?.file_data || meta?.file_url || meta?.fileUrl || m.file_data || m.file_url || m.fileUrl || null;
+        const fileName = meta?.file_name || meta?.fileName || m.file_name || m.fileName || null;
+        const fileType = meta?.file_type || meta?.fileType || m.file_type || m.fileType || null;
+        const fileSize = meta?.file_size || meta?.fileSize || m.file_size || m.fileSize || 0;
         const humanDesc = meta?.human_description || meta?.notes || (!meta ? m.description : '');
 
         return {
