@@ -454,7 +454,7 @@ const StudyModules = () => {
                         </div>
                         <div>
                           <div className="sm-doc-title">{item.title}</div>
-                          <div className="sm-doc-sub">{item.subject || item.title}</div>
+                          <div className="sm-doc-sub">{item.fileName || (item.title ? `${item.title}.pdf` : "Document")}</div>
                         </div>
                       </div>
                     </td>
