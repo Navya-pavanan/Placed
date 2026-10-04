@@ -369,6 +369,13 @@ const CodingRoundUI = ({ onComplete, onExit, customProblems, title = "Coding Cha
           <button className="btn btn-outline btn-sm" onClick={onExit} style={{ background: '#FFFFFF', color: 'var(--text-secondary, #475569)', borderColor: 'var(--border, #E2E8F0)', fontWeight: 600 }}>
             Exit Test
           </button>
+          <button 
+            className="btn btn-sm" 
+            onClick={handleFinish} 
+            style={{ background: '#2563EB', color: '#FFFFFF', border: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, boxShadow: '0 2px 6px rgba(37,99,235,0.25)', padding: '6px 14px', borderRadius: '7px' }}
+          >
+            Submit Test <CheckCircle2 size={14} />
+          </button>
         </div>
       </div>
 
@@ -623,16 +630,29 @@ const CodingRoundUI = ({ onComplete, onExit, customProblems, title = "Coding Cha
                 </button>
               </div>
 
-              <div>
-                {allSubmitted ? (
-                  <button className="btn btn-sm" onClick={handleFinish} style={{ background: '#2563EB', color: '#FFFFFF', fontWeight: 700, padding: '7px 14px', borderRadius: '8px', border: 'none' }}>
-                    Finish Coding Challenge <Check size={14} style={{ marginLeft: 4 }} />
-                  </button>
-                ) : (
-                  <span style={{ fontSize: '12.5px', color: '#64748B', fontWeight: 600 }}>
-                    {Object.values(submitted).filter(Boolean).length} / {problems.length} Problems Solved
-                  </span>
-                )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '12.5px', color: '#64748B', fontWeight: 600 }}>
+                  {Object.values(submitted).filter(Boolean).length} / {problems.length} Problems Solved
+                </span>
+                <button
+                  className="btn btn-sm"
+                  onClick={handleFinish}
+                  style={{
+                    background: '#2563EB',
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    padding: '7px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 6px rgba(37,99,235,0.25)'
+                  }}
+                >
+                  Submit Test <CheckCircle2 size={14} />
+                </button>
               </div>
             </div>
           </div>
