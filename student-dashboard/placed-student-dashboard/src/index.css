@@ -587,7 +587,9 @@ p, .body-text {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
   min-width: 0;
   position: relative;
 }
