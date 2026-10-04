@@ -16,16 +16,66 @@ import {
 } from 'lucide-react';
 
 import { simulationService } from '../../../services/simulationService';
+import { executeAllTestCases } from '../../../services/codeExecutionService';
 import '../AssessmentTest.css';
 
 const LANGUAGES = ['Python', 'JavaScript', 'Java', 'C++', 'C'];
 
 const DEFAULT_CODE = {
-  'Python': `# Write your solution here\n\ndef solve():\n    # Read input and print output\n    import sys\n    lines = sys.stdin.read().splitlines()\n    if not lines: return\n    print("Solution output")\n\nsolve()`,
-  'JavaScript': `// Write your JavaScript solution here\n\nfunction solve(input) {\n  // Process input and return result\n  return input.trim();\n}\n\n// Driver execution\nconsole.log(solve("Sample Output"));`,
-  'Java': `// Write your Java solution here\nimport java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // your code\n    }\n}`,
-  'C++': `// Write your C++ solution here\n#include <iostream>\nusing namespace std;\n\nint main() {\n    // your code\n    return 0;\n}`,
-  'C': `// Write your C solution here\n#include <stdio.h>\n\nint main() {\n    // your code\n    return 0;\n}`
+  'Python': `# Write your Python solution here
+import sys
+
+def solve():
+    lines = sys.stdin.read().strip().split('\\n')
+    if not lines:
+        return
+    # TODO: Read input and print output
+
+if __name__ == '__main__':
+    solve()`,
+  'JavaScript': `// Write your JavaScript solution here
+const fs = require('fs');
+
+function solve() {
+  const input = fs.readFileSync(0, 'utf-8').trim();
+  if (!input) return;
+  // TODO: Process input and log output
+  
+}
+
+solve();`,
+  'Java': `// Write your Java solution here
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        // TODO: Read input and print output
+        
+    }
+}`,
+  'C++': `// Write your C++ solution here
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    // TODO: Read input and print output
+    
+    return 0;
+}`,
+  'C': `// Write your C solution here
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    // TODO: Read input and print output
+    
+    return 0;
+}`
 };
 
 const CodingRoundUI = ({ onComplete, onExit, customProblems, title = "Coding Challenge", durationMinutes = 60 }) => {
@@ -81,11 +131,11 @@ const CodingRoundUI = ({ onComplete, onExit, customProblems, title = "Coding Cha
           sampleInput: item.sampleInput || item.sample_input,
           sampleOutput: item.sampleOutput || item.sample_output,
           testCases: item.testCases || [
-            { id: 1, input: item.sample_input || "4\n2 7 11 15\n9", expectedOutput: item.sample_output || "0 1", isHidden: false },
-            { id: 2, input: "3\n3 2 4\n6", expectedOutput: "1 2", isHidden: false },
-            { id: 3, input: "2\n3 3\n6", expectedOutput: "0 1", isHidden: true },
-            { id: 4, input: "5\n1 5 8 12 19\n20", expectedOutput: "0 4", isHidden: true },
-            { id: 5, input: "4\n-1 -2 -3 -4\n-6", expectedOutput: "1 3", isHidden: true }
+            { id: 1, input: item.sample_input || "4\\n2 7 11 15\\n9", expectedOutput: item.sample_output || "0 1", isHidden: false },
+            { id: 2, input: "3\\n3 2 4\\n6", expectedOutput: "1 2", isHidden: false },
+            { id: 3, input: "2\\n3 3\\n6", expectedOutput: "0 1", isHidden: true },
+            { id: 4, input: "5\\n1 5 8 12 19\\n20", expectedOutput: "0 4", isHidden: true },
+            { id: 5, input: "4\\n-1 -2 -3 -4\\n-6", expectedOutput: "1 3", isHidden: true }
           ]
         }));
 
@@ -152,85 +202,72 @@ const CodingRoundUI = ({ onComplete, onExit, customProblems, title = "Coding Cha
   };
 
   // Run Test Cases
-  const handleRunCode = () => {
+  const handleRunCode = async () => {
     setIsRunningCode(true);
 
-    setTimeout(() => {
-      const p = problems[currentProblem];
-      const rawTestCases = p?.testCases || [
-        { id: 1, input: p?.sampleInput || "Input 1", expectedOutput: p?.sampleOutput || "Output 1", isHidden: false },
-        { id: 2, input: "Input 2", expectedOutput: "Output 2", isHidden: false },
-        { id: 3, input: "Input 3", expectedOutput: "Output 3", isHidden: true },
-        { id: 4, input: "Input 4", expectedOutput: "Output 4", isHidden: true },
-        { id: 5, input: "Input 5", expectedOutput: "Output 5", isHidden: true }
-      ];
-
-      const userCode = codes[currentProblem] || "";
-      const isMeaningfulCode = userCode.trim().length > 30 && !userCode.includes("pass");
-
-      const testCaseResults = rawTestCases.map((tc, idx) => {
-        const passed = isMeaningfulCode;
-        return {
-          id: idx + 1,
-          input: tc.input,
-          expectedOutput: tc.expectedOutput,
-          actualOutput: passed ? tc.expectedOutput : (userCode.trim() ? "Output format mismatch" : "None"),
-          passed: passed,
-          isHidden: Boolean(tc.isHidden),
-          executionTime: `${Math.floor(Math.random() * 25 + 12)}ms`,
-          memory: `${(Math.random() * 4 + 14).toFixed(1)} MB`
-        };
-      });
-
-      const passedCount = testCaseResults.filter(r => r.passed).length;
-      const totalCount = testCaseResults.length;
-
-      setTestResults(prev => ({
-        ...prev,
-        [currentProblem]: {
-          status: passedCount === totalCount ? 'Accepted' : 'Wrong Answer',
-          passedCount,
-          totalCount,
-          details: testCaseResults
-        }
-      }));
-
-      setIsRunningCode(false);
-    }, 600);
-  };
-
-  const handleSubmitProblem = () => {
     const p = problems[currentProblem];
-    const rawTestCases = p?.testCases || [
-      { id: 1, input: p?.sampleInput || "", expectedOutput: p?.sampleOutput || "", isHidden: false },
-      { id: 2, input: "", expectedOutput: "", isHidden: false },
-      { id: 3, input: "", expectedOutput: "", isHidden: true },
-      { id: 4, input: "", expectedOutput: "", isHidden: true },
-      { id: 5, input: "", expectedOutput: "", isHidden: true }
+    const rawTestCases = p?.testCases && p.testCases.length > 0 ? p.testCases : [
+      { id: 1, input: p?.sampleInput || "4\\n2 7 11 15\\n9", expectedOutput: p?.sampleOutput || "0 1", isHidden: false },
+      { id: 2, input: "3\\n3 2 4\\n6", expectedOutput: "1 2", isHidden: false },
+      { id: 3, input: "2\\n3 3\\n6", expectedOutput: "0 1", isHidden: true },
+      { id: 4, input: "5\\n1 5 8 12 19\\n20", expectedOutput: "0 4", isHidden: true },
+      { id: 5, input: "4\\n-1 -2 -3 -4\\n-6", expectedOutput: "1 3", isHidden: true }
     ];
 
-    const testCaseResults = rawTestCases.map((tc, idx) => ({
-      id: idx + 1,
-      input: tc.input,
-      expectedOutput: tc.expectedOutput,
-      actualOutput: tc.expectedOutput,
-      passed: true,
-      isHidden: Boolean(tc.isHidden),
-      executionTime: '18ms',
-      memory: '14.2 MB'
-    }));
+    const userCode = codes[currentProblem] || DEFAULT_CODE[language];
 
-    setTestResults(prev => ({
-      ...prev,
-      [currentProblem]: {
-        status: 'Accepted',
-        passedCount: rawTestCases.length,
-        totalCount: rawTestCases.length,
-        details: testCaseResults
+    try {
+      const result = await executeAllTestCases(language, userCode, rawTestCases);
+      setTestResults(prev => ({
+        ...prev,
+        [currentProblem]: result
+      }));
+
+      // Focus on first failed test case if any
+      const firstFailedIdx = result.details.findIndex(d => !d.passed);
+      if (firstFailedIdx !== -1) {
+        setActiveTestTab(firstFailedIdx);
       }
-    }));
+    } catch (err) {
+      console.error("Test execution failed:", err);
+    } finally {
+      setIsRunningCode(false);
+    }
+  };
 
-    setSubmitted((prev) => ({ ...prev, [currentProblem]: true }));
+  const handleSubmitProblem = async () => {
+    setIsRunningCode(true);
+
+    const p = problems[currentProblem];
+    const rawTestCases = p?.testCases && p.testCases.length > 0 ? p.testCases : [
+      { id: 1, input: p?.sampleInput || "4\\n2 7 11 15\\n9", expectedOutput: p?.sampleOutput || "0 1", isHidden: false },
+      { id: 2, input: "3\\n3 2 4\\n6", expectedOutput: "1 2", isHidden: false },
+      { id: 3, input: "2\\n3 3\\n6", expectedOutput: "0 1", isHidden: true },
+      { id: 4, input: "5\\n1 5 8 12 19\\n20", expectedOutput: "0 4", isHidden: true },
+      { id: 5, input: "4\\n-1 -2 -3 -4\\n-6", expectedOutput: "1 3", isHidden: true }
+    ];
+
+    const userCode = codes[currentProblem] || DEFAULT_CODE[language];
+
+    try {
+      const result = await executeAllTestCases(language, userCode, rawTestCases);
+      setTestResults(prev => ({
+        ...prev,
+        [currentProblem]: result
+      }));
+
+      const allPassed = result.passedCount === result.totalCount;
+      setSubmitted(prev => ({ ...prev, [currentProblem]: allPassed }));
+
+      const firstFailedIdx = result.details.findIndex(d => !d.passed);
+      if (firstFailedIdx !== -1) {
+        setActiveTestTab(firstFailedIdx);
+      }
+    } catch (err) {
+      console.error("Submit execution failed:", err);
+    } finally {
+      setIsRunningCode(false);
+    }
   };
 
   const handleFinish = () => {
@@ -292,11 +329,11 @@ const CodingRoundUI = ({ onComplete, onExit, customProblems, title = "Coding Cha
   const isTimeLow = timeRemaining <= 300;
   const currentTestResult = testResults[currentProblem];
   const testCasesList = problem.testCases && problem.testCases.length > 0 ? problem.testCases : [
-    { id: 1, input: problem.sampleInput || "Sample Input 1", expectedOutput: problem.sampleOutput || "Sample Output 1", isHidden: false },
-    { id: 2, input: "Sample Input 2", expectedOutput: "Sample Output 2", isHidden: false },
-    { id: 3, input: "Hidden Input 3", expectedOutput: "Hidden Output 3", isHidden: true },
-    { id: 4, input: "Hidden Input 4", expectedOutput: "Hidden Output 4", isHidden: true },
-    { id: 5, input: "Hidden Input 5", expectedOutput: "Hidden Output 5", isHidden: true }
+    { id: 1, input: problem.sampleInput || "4\\n2 7 11 15\\n9", expectedOutput: problem.sampleOutput || "0 1", isHidden: false },
+    { id: 2, input: "3\\n3 2 4\\n6", expectedOutput: "1 2", isHidden: false },
+    { id: 3, input: "2\\n3 3\\n6", expectedOutput: "0 1", isHidden: true },
+    { id: 4, input: "5\\n1 5 8 12 19\\n20", expectedOutput: "0 4", isHidden: true },
+    { id: 5, input: "4\\n-1 -2 -3 -4\\n-6", expectedOutput: "1 3", isHidden: true }
   ];
 
   const allSubmitted = problems.length > 0 && problems.every((_, index) => submitted[index]);
