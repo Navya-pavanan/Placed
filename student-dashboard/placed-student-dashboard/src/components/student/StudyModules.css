@@ -519,15 +519,19 @@
   transform: translateY(-50%) scale(0.96);
 }
 
-/* PDF Container */
+/* PDF Container: Standard Centered Google Drive Document View */
 .gdrive-pdf-container {
-  width: 100%;
-  height: 100%;
+  width: min(860px, 92vw);
+  height: calc(100vh - 80px);
+  margin: 12px auto;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   background: #282a2d;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  transition: transform 0.2s ease, width 0.2s ease;
 }
 
 .gdrive-pdf-iframe {
@@ -535,7 +539,8 @@
   height: 100%;
   border: none;
   display: block;
-  background: #282a2d;
+  background: #ffffff;
+  border-radius: 4px;
 }
 
 /* Image Container */

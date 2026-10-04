@@ -636,19 +636,19 @@ const StudyModules = () => {
 
             {docMeta.fileData ? (
               docMeta.isPdf ? (
-                /* PDF Viewer: Full height iframe with Google Drive aesthetic & page navigation */
-                <div className="gdrive-pdf-container">
+                /* PDF Viewer: Standard Centered Google Drive Document with Page Navigation */
+                <div 
+                  className="gdrive-pdf-container"
+                  style={{
+                    transform: zoom !== 100 ? `scale(${zoom / 100})` : 'none',
+                    transformOrigin: 'top center'
+                  }}
+                >
                   <iframe
                     key={`${activeDocument.id}-page-${currentPage}`}
-                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
                     title={activeDocument.title}
                     className="gdrive-pdf-iframe"
-                    style={{
-                      transform: zoom !== 100 ? `scale(${zoom / 100})` : 'none',
-                      transformOrigin: 'top center',
-                      width: zoom !== 100 ? `${100 * (100 / zoom)}%` : '100%',
-                      height: zoom !== 100 ? `${100 * (100 / zoom)}%` : '100%'
-                    }}
                   />
                 </div>
               ) : docMeta.isImage ? (
@@ -673,10 +673,16 @@ const StudyModules = () => {
                   </pre>
                 </div>
               ) : (
-                <div className="gdrive-pdf-container">
+                <div 
+                  className="gdrive-pdf-container"
+                  style={{
+                    transform: zoom !== 100 ? `scale(${zoom / 100})` : 'none',
+                    transformOrigin: 'top center'
+                  }}
+                >
                   <iframe
                     key={`${activeDocument.id}-page-${currentPage}`}
-                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`}
+                    src={`${docMeta.fileData}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`}
                     title={activeDocument.title}
                     className="gdrive-pdf-iframe"
                   />
