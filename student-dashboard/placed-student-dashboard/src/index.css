@@ -57,6 +57,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
+  min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -134,8 +135,9 @@ p, .body-text {
    ============================================= */
 .app-shell {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
 }
 
 /* =============================================
@@ -151,7 +153,8 @@ p, .body-text {
   transition: width var(--transition-slow);
   overflow: hidden;
   z-index: 100;
-  position: relative;
+  position: sticky;
+  top: 0;
 }
 
 .sidebar.collapsed {
@@ -587,10 +590,8 @@ p, .body-text {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100vh;
   min-width: 0;
+  min-height: 100vh;
   position: relative;
 }
 
@@ -910,16 +911,14 @@ p, .body-text {
    ============================================= */
 .dashboard-content {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 24px;
-  padding-bottom: 40px;
+  padding: 24px 28px 80px 28px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   position: relative;
   z-index: 2;
-  min-height: 0;
+  min-height: min-content;
+  width: 100%;
 }
 
 
