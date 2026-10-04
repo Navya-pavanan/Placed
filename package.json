@@ -1,0 +1,12 @@
+{
+  "name": "placed-comb",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev:all",
+    "dev:admin": "npm --prefix admin-dashboard/admindashboard-placed run dev",
+    "dev:student": "npm --prefix student-dashboard/placed-student-dashboard run dev",
+    "dev:all": "node -e \"const { spawn } = require('child_process'); spawn('npm', ['--prefix', 'admin-dashboard/admindashboard-placed', 'run', 'dev'], { stdio: 'inherit', shell: true }); spawn('npm', ['--prefix', 'student-dashboard/placed-student-dashboard', 'run', 'dev'], { stdio: 'inherit', shell: true });\"",
+    "start": "npm run dev:all"
+  }
+}
