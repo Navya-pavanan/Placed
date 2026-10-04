@@ -6,35 +6,35 @@
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
   overflow: hidden;
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
 
 .sm-header {
-  padding: 20px 24px;
+  padding: 14px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #edf2f7;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   background: #ffffff;
 }
 
 .sm-header-left {
   flex: 1;
-  min-width: 240px;
+  min-width: 220px;
 }
 
 .sm-title {
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0 0 3px 0;
+  margin: 0 0 2px 0;
   letter-spacing: -0.01em;
 }
 
 .sm-subtitle {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #64748b;
   margin: 0;
 }
@@ -42,7 +42,7 @@
 .sm-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -51,23 +51,23 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 260px;
+  width: 240px;
 }
 
 .sm-search-icon {
   position: absolute;
-  left: 12px;
+  left: 10px;
   color: #94a3b8;
   pointer-events: none;
 }
 
 .sm-search-input {
   width: 100%;
-  height: 38px;
-  padding: 8px 30px 8px 36px;
+  height: 34px;
+  padding: 6px 28px 6px 32px;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 7px;
+  font-size: 12.5px;
   color: #1e293b;
   background: #ffffff;
   outline: none;
@@ -77,7 +77,7 @@
 
 .sm-search-input::placeholder {
   color: #94a3b8;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .sm-search-input:focus {
@@ -87,7 +87,7 @@
 
 .sm-clear-btn {
   position: absolute;
-  right: 10px;
+  right: 8px;
   background: none;
   border: none;
   color: #94a3b8;
@@ -112,11 +112,11 @@
 }
 
 .sm-select {
-  height: 38px;
-  padding: 8px 34px 8px 14px;
+  height: 34px;
+  padding: 6px 30px 6px 12px;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 7px;
+  font-size: 12.5px;
   color: #1e293b;
   background: #ffffff;
   outline: none;
@@ -126,8 +126,8 @@
   font-family: inherit;
   font-weight: 500;
   transition: all 0.15s ease;
-  min-width: 150px;
-  max-width: 280px;
+  min-width: 140px;
+  max-width: 260px;
 }
 
 .sm-select:focus {
@@ -137,7 +137,7 @@
 
 .sm-select-arrow {
   position: absolute;
-  right: 12px;
+  right: 10px;
   pointer-events: none;
   color: #64748b;
 }
@@ -155,7 +155,7 @@
 }
 
 .sm-table th {
-  padding: 13px 24px;
+  padding: 10px 20px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -167,7 +167,7 @@
 }
 
 .sm-table td {
-  padding: 14px 24px;
+  padding: 10px 20px;
   vertical-align: middle;
   border-bottom: 1px solid #f1f5f9;
   font-size: 13px;
@@ -190,13 +190,13 @@
 .sm-doc-cell {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .sm-doc-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
   background: #eff6ff;
   border: 1px solid #dbeafe;
   display: flex;
@@ -209,21 +209,21 @@
 .sm-doc-title {
   font-weight: 700;
   color: #0f172a;
-  font-size: 13.5px;
-  line-height: 1.3;
+  font-size: 13px;
+  line-height: 1.25;
 }
 
 .sm-doc-sub {
-  font-size: 11.5px;
+  font-size: 11px;
   color: #64748b;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .sm-topic-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 9999px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   background: #eff6ff;
   color: #2563eb;
@@ -234,13 +234,13 @@
 .sm-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
+  gap: 5px;
+  padding: 5px 12px;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
   color: #0f172a;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -260,19 +260,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
+  padding: 10px 20px;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
   flex-wrap: wrap;
-  gap: 16px;
-  min-height: 60px;
+  gap: 12px;
+  min-height: 48px;
   box-sizing: border-box;
 }
 
 .sm-pagination-info {
-  font-size: 13px;
+  font-size: 12.5px;
   color: #64748b;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .sm-pagination-info strong {
@@ -283,29 +283,29 @@
 .sm-pagination-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .sm-page-size-wrap {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-right: 8px;
+  gap: 5px;
+  margin-right: 6px;
 }
 
 .sm-page-size-label {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #64748b;
   font-weight: 500;
 }
 
 .sm-page-size-select {
-  height: 32px;
-  padding: 4px 10px;
+  height: 28px;
+  padding: 2px 8px;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   color: #1e293b;
   background: #ffffff;
@@ -329,10 +329,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  padding: 0 8px;
-  font-size: 13px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 7px;
+  font-size: 12px;
   font-weight: 600;
   color: #475569;
   background: #ffffff;
@@ -364,10 +364,10 @@
 }
 
 .sm-page-nav {
-  padding: 0 12px;
-  gap: 4px;
+  padding: 0 10px;
+  gap: 3px;
   font-weight: 600;
-  font-size: 12.5px;
+  font-size: 12px;
 }
 
 @media (max-width: 768px) {
@@ -380,443 +380,4 @@
     justify-content: space-between;
   }
 }
-
-/* Empty State */
-.sm-empty {
-  padding: 56px 24px;
-  text-align: center;
-  color: #64748b;
-  font-size: 14px;
-}
-
-/* Google Drive Style Fullscreen Document Viewer (Strictly View-Only, No Download) */
-.gdrive-viewer-root {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  z-index: 9999999 !important;
-  background: #202124 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  animation: gdriveFadeIn 0.15s ease-out;
-}
-
-@keyframes gdriveFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Google Drive Dark Header */
-.gdrive-topbar {
-  height: 56px;
-  background: #1e1f20;
-  border-bottom: 1px solid #333537;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  gap: 16px;
-  color: #ffffff;
-  flex-shrink: 0;
-  z-index: 10;
-}
-
-.gdrive-topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  flex: 1;
-}
-
-.gdrive-topbar-center {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #282a2d;
-  padding: 3px 8px;
-  border-radius: 20px;
-  border: 1px solid #3c4043;
-}
-
-.gdrive-page-box {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.gdrive-page-text {
-  font-size: 12px;
-  color: #9aa0a6;
-  font-weight: 500;
-  user-select: none;
-}
-
-.gdrive-page-input {
-  width: 42px;
-  height: 26px;
-  background: #1e1f20;
-  border: 1px solid #444746;
-  border-radius: 4px;
-  color: #ffffff;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  outline: none;
-  transition: all 0.15s ease;
-}
-
-.gdrive-page-input:focus {
-  border-color: #8ab4f8;
-  box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2);
-}
-
-.gdrive-page-input::-webkit-inner-spin-button,
-.gdrive-page-input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.gdrive-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.gdrive-btn {
-  background: transparent;
-  border: none;
-  color: #c4c7c5;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.gdrive-btn:hover:not(:disabled) {
-  background: #333537;
-  color: #ffffff;
-}
-
-.gdrive-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.gdrive-back-btn:hover {
-  background: #2d2f31;
-  color: #ffffff;
-}
-
-.gdrive-close-btn:hover {
-  background: rgba(239, 68, 68, 0.2) !important;
-  color: #f87171 !important;
-}
-
-.gdrive-file-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gdrive-pdf-icon-tag {
-  background: #ea4335;
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  padding: 2.5px 6px;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-}
-
-.gdrive-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.gdrive-doc-title {
-  color: #f1f3f4;
-  font-size: 14.5px;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 480px;
-}
-
-.gdrive-topic-pill {
-  background: #2d2f31;
-  color: #a8c7fa;
-  font-size: 11.5px;
-  font-weight: 500;
-  padding: 3px 10px;
-  border-radius: 9999px;
-  white-space: nowrap;
-  border: 1px solid #3c4043;
-}
-
-.gdrive-zoom-val {
-  color: #e3e3e3;
-  font-size: 12.5px;
-  font-weight: 600;
-  min-width: 44px;
-  text-align: center;
-  user-select: none;
-}
-
-.gdrive-divider {
-  width: 1px;
-  height: 22px;
-  background: #3c4043;
-  margin: 0 4px;
-}
-
-/* Canvas Area */
-.gdrive-canvas {
-  flex: 1;
-  height: calc(100vh - 56px);
-  background: #202124;
-  overflow: auto;
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-}
-
-/* FLOATING PREV / NEXT ARROW BUTTONS (Google Drive Style) */
-.gdrive-floating-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(30, 31, 32, 0.82);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #f1f3f4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 50;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.gdrive-floating-prev {
-  left: 20px;
-}
-
-.gdrive-floating-next {
-  right: 20px;
-}
-
-.gdrive-floating-nav:hover {
-  background: #1e1f20;
-  color: #ffffff;
-  transform: translateY(-50%) scale(1.1);
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
-}
-
-.gdrive-floating-nav:active {
-  transform: translateY(-50%) scale(0.96);
-}
-
-/* PDF Container: Standard Centered Google Drive Document View */
-.gdrive-pdf-container {
-  width: min(860px, 92vw);
-  height: calc(100vh - 80px);
-  margin: 12px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: #282a2d;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
-  transition: transform 0.2s ease, width 0.2s ease;
-}
-
-.gdrive-pdf-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  background: #ffffff;
-  border-radius: 4px;
-}
-
-/* Image Container */
-.gdrive-image-wrap {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: auto;
-  padding: 24px;
-}
-
-.gdrive-image {
-  max-width: 90%;
-  max-height: 85vh;
-  object-fit: contain;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.5);
-  border-radius: 4px;
-}
-
-/* Document Sheet (Google Docs page style fallback) */
-.gdrive-doc-page {
-  background: #ffffff;
-  width: 100%;
-  max-width: 860px;
-  margin: 28px auto;
-  padding: 48px 56px;
-  border-radius: 6px;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.4);
-  color: #1e293b;
-  height: fit-content;
-}
-
-.gdrive-doc-sheet-header {
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 20px;
-  margin-bottom: 24px;
-}
-
-.gdrive-doc-sheet-title {
-  font-size: 24px;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 10px 0;
-  letter-spacing: -0.01em;
-}
-
-.gdrive-doc-sheet-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 12.5px;
-  color: #64748b;
-  margin-bottom: 8px;
-}
-
-.gdrive-doc-sheet-desc {
-  font-size: 14px;
-  color: #475569;
-  line-height: 1.6;
-  margin: 10px 0 0 0;
-}
-
-.gdrive-text-content {
-  font-family: Consolas, Monaco, "Courier New", monospace;
-  font-size: 13.5px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: #0f172a;
-  margin: 0;
-}
-
-.gdrive-doc-section {
-  margin-bottom: 26px;
-}
-
-.gdrive-doc-section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 10px 0;
-}
-
-.gdrive-doc-p {
-  font-size: 13.5px;
-  color: #334155;
-  line-height: 1.65;
-  margin-bottom: 12px;
-}
-
-.gdrive-syllabus-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.gdrive-syllabus-item {
-  background: #f8fafc;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  font-size: 13px;
-  color: #475569;
-}
-
-.gdrive-syllabus-item strong {
-  color: #0f172a;
-  margin-right: 6px;
-}
-
-.gdrive-bullets {
-  padding-left: 20px;
-  margin: 0 0 16px 0;
-  font-size: 13px;
-  color: #334155;
-  line-height: 1.6;
-}
-
-.gdrive-callout {
-  background: #eff6ff;
-  border-left: 4px solid #2563eb;
-  padding: 14px 18px;
-  border-radius: 0 8px 8px 0;
-  font-size: 13px;
-  color: #1e40af;
-}
-
-.gdrive-callout ul {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.gdrive-callout li {
-  margin-bottom: 6px;
-}
-
-.gdrive-callout li:last-child {
-  margin-bottom: 0;
-}
-
-/* Print protection rule */
-@media print {
-  body {
-    display: none !important;
-  }
-}
-
 
