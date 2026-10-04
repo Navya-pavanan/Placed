@@ -693,3 +693,128 @@
   }
 }
 
+
+/* =============================================
+   STUDY MODULES TABLE PAGINATION STYLES
+   ============================================= */
+.sm-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: #ffffff;
+  border-top: 1px solid #edf2f7;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.sm-pagination-info {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.sm-pagination-info strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.sm-pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sm-page-size-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 6px;
+}
+
+.sm-page-size-label {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.sm-page-size-select {
+  height: 32px;
+  padding: 4px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e293b;
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.sm-page-size-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.sm-page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sm-page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.sm-page-btn:hover:not(:disabled) {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+.sm-page-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+}
+
+.sm-page-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.sm-page-nav {
+  padding: 0 12px;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+@media (max-width: 768px) {
+  .sm-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sm-pagination-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

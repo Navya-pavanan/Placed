@@ -119,6 +119,10 @@ const StudyModules = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('All Topics');
 
+  // Pagination state
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
   // Google Drive-like Fullscreen Document Viewer state (View Only - No Download)
   const [activeDocument, setActiveDocument] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -194,6 +198,20 @@ const StudyModules = () => {
       return topicMatches && searchMatches;
     });
   }, [modules, selectedTopic, searchQuery]);
+
+  // Reset pageIndex to 1 when filters change
+  useEffect(() => {
+    setPageIndex(1);
+  }, [searchQuery, selectedTopic]);
+
+  // Pagination calculations
+  const totalPages = Math.max(1, Math.ceil(filteredModules.length / pageSize));
+  const safePageIndex = Math.min(pageIndex, totalPages);
+
+  const paginatedModules = useMemo(() => {
+    const start = (safePageIndex - 1) * pageSize;
+    return filteredModules.slice(start, start + pageSize);
+  }, [filteredModules, safePageIndex, pageSize]);
 
   // Keydown protection & navigation
   useEffect(() => {
@@ -426,7 +444,7 @@ const StudyModules = () => {
                   </td>
                 </tr>
               ) : (
-                filteredModules.map((item) => (
+                paginatedModules.map((item) => (
                   <tr key={item.id}>
                     {/* Document Name & Icon */}
                     <td>
@@ -474,6 +492,70 @@ const StudyModules = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {filteredModules.length > 0 && (
+          <div className="sm-pagination">
+            <div className="sm-pagination-info">
+              Showing <strong>{Math.min((safePageIndex - 1) * pageSize + 1, filteredModules.length)}</strong> to{' '}
+              <strong>{Math.min(safePageIndex * pageSize, filteredModules.length)}</strong> of{' '}
+              <strong>{filteredModules.length}</strong> study materials
+            </div>
+
+            <div className="sm-pagination-actions">
+              <div className="sm-page-size-wrap">
+                <span className="sm-page-size-label">Show:</span>
+                <select
+                  className="sm-page-size-select"
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setPageIndex(1);
+                  }}
+                  aria-label="Rows per page"
+                >
+                  <option value={5}>5 per page</option>
+                  <option value={10}>10 per page</option>
+                  <option value={20}>20 per page</option>
+                  <option value={50}>50 per page</option>
+                </select>
+              </div>
+
+              <button
+                className="sm-page-btn sm-page-nav"
+                onClick={() => setPageIndex(p => Math.max(1, p - 1))}
+                disabled={safePageIndex <= 1}
+                title="Previous Page"
+                aria-label="Previous Page"
+              >
+                <ChevronLeft size={16} /> Prev
+              </button>
+
+              <div className="sm-page-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+                  <button
+                    key={num}
+                    className={`sm-page-btn ${safePageIndex === num ? 'active' : ''}`}
+                    onClick={() => setPageIndex(num)}
+                    aria-label={`Page ${num}`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                className="sm-page-btn sm-page-nav"
+                onClick={() => setPageIndex(p => Math.min(totalPages, p + 1))}
+                disabled={safePageIndex >= totalPages}
+                title="Next Page"
+                aria-label="Next Page"
+              >
+                Next <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* GOOGLE DRIVE STYLE FULLSCREEN VIEWER (VIEW ONLY - NO DOWNLOAD) */}
